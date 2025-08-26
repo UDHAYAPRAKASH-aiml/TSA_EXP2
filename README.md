@@ -88,6 +88,7 @@ print("Polynomial coefficients:", poly_model.coef_, "Intercept:", poly_model.int
 
 
 ### OUTPUT:
+```
 <img width="1920" height="1200" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/b1c607f3-ca20-46bd-a001-6acebda655ff" />
 <img width="1920" height="1200" alt="Screenshot (172)" src="https://github.com/user-attachments/assets/deedca1c-e718-4597-8334-974c597a8bb5" />
 
