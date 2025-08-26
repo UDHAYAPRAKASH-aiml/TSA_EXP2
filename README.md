@@ -31,89 +31,67 @@ To implement Linear and Polynomial Trend Estimation using Python.
 ---
 
 ### PROGRAM:
-
-```python
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
 
 # Load dataset
-df = pd.read_csv("weatherHistory.csv")
+data = pd.read_csv("C:\\Users\\admin\\time series\\housing_price_dataset.csv")
 
-# Convert and extract year
-df['Formatted Date'] = pd.to_datetime(df['Formatted Date'], utc=True, errors='coerce')
-df['Year'] = df['Formatted Date'].dt.year
+# Group by YearBuilt to create a time series of average prices per year
+price_series = data.groupby("YearBuilt")["Price"].mean().reset_index()
 
-# Yearly average temperature
-yearly_avg = df.groupby('Year')['Temperature (C)'].mean().reset_index()
-X_vals = yearly_avg['Year'].values.reshape(-1, 1)
-temps = yearly_avg['Temperature (C)'].values
+# Linear Regression (trend)
+X = price_series[["YearBuilt"]]
+y = price_series["Price"]
 
-# ---- Linear Regression ----
-lin_model = LinearRegression()
-lin_model.fit(X_vals, temps)
-linear_fit = lin_model.predict(X_vals)
+linear_model = LinearRegression()
+linear_model.fit(X, y)
+price_series["linear_trend"] = linear_model.predict(X)
 
-# ---- Polynomial Regression (Degree 2) ----
-poly = PolynomialFeatures(degree=2, include_bias=False)
-X_poly = poly.fit_transform(X_vals)
+# Polynomial Regression (Quadratic)
+poly_degree = 2
+X_poly = np.column_stack([X.values**i for i in range(1, poly_degree + 1)])
 poly_model = LinearRegression()
-poly_model.fit(X_poly, temps)
-poly_fit = poly_model.predict(X_poly)
+poly_model.fit(X_poly, y)
+price_series["poly_trend"] = poly_model.predict(X_poly)
 
-# ---- Future Prediction (up to 2025) ----
-future_years = np.arange(X_vals.min(), 2026).reshape(-1, 1)  # Extend until 2025
-future_linear = lin_model.predict(future_years)
-future_poly = poly_model.predict(poly.transform(future_years))
-
-# Display prediction values in console
-print("Predictions (2017–2025):")
-for year, l_val, p_val in zip(future_years.ravel(), future_linear, future_poly):
-    if year >= 2017:  # Only show future years
-        print(f"{year}: Linear={l_val:.2f} °C, Polynomial={p_val:.2f} °C")
-
-# ---- Visualization ----
-plt.figure(figsize=(12, 7))
-
-# Original scatter and line
-plt.scatter(X_vals, temps, color='blue', label="Avg Temp per Year")
-plt.plot(X_vals, temps, color='blue', alpha=0.6)
-
-# Trend lines
-plt.plot(X_vals, linear_fit, 'k--', label="Linear Trend (Historical)")
-plt.plot(X_vals, poly_fit, 'r-', label="Polynomial Trend (Historical)")
-
-# Extended prediction lines
-plt.plot(future_years, future_linear, 'k:', label="Linear Prediction")
-plt.plot(future_years, future_poly, 'r--', alpha=0.7, label="Polynomial Prediction")
-
-# Mark predicted points
-plt.scatter(future_years, future_linear, marker='s', color='black', s=40, label="Linear Forecast Points")
-plt.scatter(future_years, future_poly, marker='^', color='red', s=40, label="Polynomial Forecast Points")
-
-plt.title("Temperature Trends and Forecast (Linear vs Polynomial)", fontsize=14)
-plt.xlabel("Year")
-plt.ylabel("Temperature (°C)")
+# ---- Plot Linear Trend ----
+plt.figure(figsize=(12, 6))
+plt.plot(price_series["YearBuilt"], price_series["Price"], 
+         label="Original (Avg Price per Year)", color="blue")
+plt.plot(price_series["YearBuilt"], price_series["linear_trend"], 
+         label="Linear Trend", color="red", linestyle="--", linewidth=2)
+plt.title("Linear Trend Estimation")
+plt.xlabel("Year Built")
+plt.ylabel("Average Price")
 plt.legend()
-plt.grid(True, linestyle="--", alpha=0.6)
 plt.show()
-```
 
----
+# ---- Plot Polynomial Trend ----
+plt.figure(figsize=(12, 6))
+plt.plot(price_series["YearBuilt"], price_series["Price"], 
+         label="Original (Avg Price per Year)", color="blue")
+plt.plot(price_series["YearBuilt"], price_series["poly_trend"], 
+         label="Polynomial Trend (Quadratic)", color="green", linestyle="-", linewidth=2)
+plt.title("Polynomial Trend Estimation (Quadratic)")
+plt.xlabel("Year Built")
+plt.ylabel("Average Price")
+plt.legend()
+plt.show()
+
+# Print coefficients to check overlap
+print("Linear coefficients:", linear_model.coef_, "Intercept:", linear_model.intercept_)
+print("Polynomial coefficients:", poly_model.coef_, "Intercept:", poly_model.intercept_)
+
 
 ### OUTPUT:
+<img width="1920" height="1200" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/b1c607f3-ca20-46bd-a001-6acebda655ff" />
+<img width="1920" height="1200" alt="Screenshot (172)" src="https://github.com/user-attachments/assets/deedca1c-e718-4597-8334-974c597a8bb5" />
 
-**A - Linear Trend Estimation**
 
-Displayed in the graph as the black dashed line (historical) and black dotted line (prediction) with square forecast points.
 
-**B - Polynomial Trend Estimation**
-
-Displayed in the graph as the red solid line (historical) and red dashed line (prediction) with triangular forecast points.
-
-![alt text](image.png)
 
 ---
 
