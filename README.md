@@ -31,6 +31,7 @@ To implement Linear and Polynomial Trend Estimation using Python.
 ---
 
 ### PROGRAM:
+```
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
