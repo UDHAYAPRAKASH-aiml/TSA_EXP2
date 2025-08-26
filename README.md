@@ -2,7 +2,7 @@
 
 ## LINEAR AND POLYNOMIAL TREND ESTIMATION
 
-## Developed By : udhaya prakash v
+## Developed By : UDHAYA PRAKASH V
 
 ## Register Number:212224240177
 
@@ -89,8 +89,8 @@ print("Polynomial coefficients:", poly_model.coef_, "Intercept:", poly_model.int
 
 ### OUTPUT:
 ```
-<img width="1920" height="1200" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/b1c607f3-ca20-46bd-a001-6acebda655ff" />
-<img width="1920" height="1200" alt="Screenshot (172)" src="https://github.com/user-attachments/assets/deedca1c-e718-4597-8334-974c597a8bb5" />
+<img width="1423" height="736" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/96856db7-6510-4649-a3dc-39fa7ea7b88c" />
+<img width="1386" height="758" alt="Screenshot (172)" src="https://github.com/user-attachments/assets/569645f9-9767-4504-8143-04714c34976d" />
 
 
 
